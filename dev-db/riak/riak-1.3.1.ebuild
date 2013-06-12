@@ -20,10 +20,9 @@ KEYWORDS="~amd64 ~x86"
 IUSE="smp kpoll hipe"
 
 RDEPEND="
-smp? ( >=dev-lang/erlang-15.2.3.1[smp] )
+>=dev-lang/erlang-15.2.3.1[smp]
 kpoll? ( >=dev-lang/erlang-15.2.3.1[kpoll] )
 hipe? ( >=dev-lang/erlang-15.2.3.1[hipe] )
-!smp? ( >=dev-lang/erlang-15.2.3.1[-smp] )
 !kpoll? ( >=dev-lang/erlang-15.2.3.1[-kpoll] )
 !hipe? ( >=dev-lang/erlang-15.2.3.1[-hipe] )
 dev-vcs/git
