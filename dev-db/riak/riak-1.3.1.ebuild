@@ -84,5 +84,10 @@ src_install() {
 
 pkg_postinst() {
     ewarn "The default user to run riak is 'riak'"
+
+    local ULIMIT=$(ulimit -n)
+    if [[ $ULIMIT < 4096 ]]; then
+        ewarn "Current open files limit is $ULIMIT. 4096 is the recommended minimum."
+    fi
 }
 

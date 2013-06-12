@@ -12,6 +12,12 @@ start() {
     if [[ "${RIAK_USER}" != "riak" && "${RIAK_USER}" != "root" ]]; then
         ewarn "make sure ${RIAK_USER} has the permission to use riaks files and directories"
     fi
+
+    local ULIMIT=$(ulimit -n)
+    if [[ $ULIMIT < 4096 ]]; then
+        ewarn "Current open files limit is $ULIMIT. 4096 is the recommended minimum."
+    fi
+
     start-stop-daemon --background --start \
         --user ${RIAK_USER} \
         --exec /usr/bin/riak -- start
