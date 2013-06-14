@@ -24,9 +24,10 @@ RDEPEND="
 kpoll? ( >=dev-lang/erlang-15.2.3.1[kpoll] )
 hipe? ( >=dev-lang/erlang-15.2.3.1[hipe] )
 !hipe? ( >=dev-lang/erlang-15.2.3.1[-hipe] )
+"
+DEPEND="${RDEPEND} 
 dev-vcs/git
 "
-DEPEND="${RDEPEND}"
 
 pkg_setup() {
 	enewgroup riak
@@ -62,6 +63,8 @@ src_install() {
 
 	insinto /etc/${PN}
 	doins rel/riak/etc/*
+	fperms 0600 /etc/${PN}/cert.pem
+	fperms 0600 /etc/${PN}/key.pem
 
 	# create neccessary directories
 	keepdir /var/lib/${PN}/{bitcask,ring}
