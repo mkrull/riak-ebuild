@@ -13,10 +13,27 @@ start() {
         ewarn "make sure ${RIAK_USER} has the permission to use riaks files and directories"
     fi
 
+	# warn on low ulimit
     local ULIMIT=$(ulimit -n)
     if [[ $ULIMIT < 4096 ]]; then
         ewarn "Current ulimit -n is $ULIMIT. 4096 is the recommended minimum."
     fi
+
+	# warn on insecure cert and key permissions
+	if [[ -f /etc/riak/cert.pem ]]; then
+		local CERT_P=$(stat -c %a /etc/riak/cert.pem)
+		if [[ $CERT_P != 600 ]]; then
+			ewarn "Check the permissions on the riak certificate /etc/riak/cert.pem."
+			ewarn "Permissions are $CERT_P, recommendet are 600."
+		fi
+	fi
+	if [[ -f /etc/riak/key.pem ]]; then
+		local KEY_P=$(stat -c %a /etc/riak/key.pem)
+		if [[ $KEY_P != 600 ]]; then
+			ewarn "Check the permissions on the riak key /etc/riak/key.pem"
+			ewarn "Permissions are $KEY_P, recommendet are 600."
+		fi
+	fi
 
     start-stop-daemon --background --start \
         --user ${RIAK_USER} \

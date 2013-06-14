@@ -20,6 +20,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="kpoll hipe"
 
 RDEPEND="
+<dev-lang/erlang-16
 >=dev-lang/erlang-15.2.3.1[smp]
 kpoll? ( >=dev-lang/erlang-15.2.3.1[kpoll] )
 hipe? ( >=dev-lang/erlang-15.2.3.1[hipe] )
