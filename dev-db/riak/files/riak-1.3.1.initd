@@ -15,7 +15,7 @@ start() {
 
     local ULIMIT=$(ulimit -n)
     if [[ $ULIMIT < 4096 ]]; then
-        ewarn "Current open files limit is $ULIMIT. 4096 is the recommended minimum."
+        ewarn "Current ulimit -n is $ULIMIT. 4096 is the recommended minimum."
     fi
 
     start-stop-daemon --background --start \
@@ -34,8 +34,11 @@ stop() {
 }
 
 status() {
-    ebegin "Status of ${SVCNAME}"
-    /usr/bin/riak-admin status
+    ebegin "${SVCNAME} member status"
+    /usr/bin/riak-admin member_status
+
+    ebegin "${SVCNAME} ring status"
+    /usr/bin/riak-admin ring_status
     eend $?
 }
 

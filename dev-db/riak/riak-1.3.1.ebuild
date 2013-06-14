@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=4
+EAPI=5
 
 inherit versionator
 
@@ -17,77 +17,81 @@ SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/$
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="smp kpoll hipe"
+IUSE="kpoll hipe"
 
 RDEPEND="
 >=dev-lang/erlang-15.2.3.1[smp]
 kpoll? ( >=dev-lang/erlang-15.2.3.1[kpoll] )
 hipe? ( >=dev-lang/erlang-15.2.3.1[hipe] )
-!kpoll? ( >=dev-lang/erlang-15.2.3.1[-kpoll] )
 !hipe? ( >=dev-lang/erlang-15.2.3.1[-hipe] )
 dev-vcs/git
 "
 DEPEND="${RDEPEND}"
 
 pkg_setup() {
-    enewgroup riak
-    enewuser riak -1 /bin/bash /var/lib/${PN} riak
+	enewgroup riak
+	enewuser riak -1 /bin/bash /var/lib/${PN} riak
 }
 
 src_prepare() {
-    epatch "${FILESDIR}/${MAJ_PV}.${MED_PV}.${MIN_PV}-fix-directories.patch"
-    sed -i -e 's/XLDFLAGS="$(LDFLAGS)"//g' -e 's/ $(CFLAGS)//g' deps/erlang_js/c_src/Makefile || die
+	epatch "${FILESDIR}/${MAJ_PV}.${MED_PV}.${MIN_PV}-fix-directories.patch"
+	sed -i -e 's/XLDFLAGS="$(LDFLAGS)"//g' -e 's/ $(CFLAGS)//g' deps/erlang_js/c_src/Makefile || die
 }
 
 src_compile() {
-    # emake failed silently.. so
-    make rel
+	# emake failed silently.. so
+	make rel
 }
 
 src_install() {
-    # install /usr/lib stuff
-    insinto /usr/lib/${PN}
-    cp -R rel/riak/lib "${D}"/usr/lib/riak
-    cp -R rel/riak/releases "${D}"/usr/lib/riak
-    cp -R rel/riak/erts* "${D}"/usr/lib/riak
-    chmod 0755 "${D}"/usr/lib/riak/erts*/bin/*
+	# install /usr/lib stuff
+	insinto /usr/lib/${PN}
+	cp -R rel/riak/lib "${D}"/usr/lib/riak
+	cp -R rel/riak/releases "${D}"/usr/lib/riak
+	cp -R rel/riak/erts* "${D}"/usr/lib/riak
+	chmod 0755 "${D}"/usr/lib/riak/erts*/bin/*
 
-    # install /usr/bin stuff
-    dobin rel/riak/bin/*
+	# install /usr/bin stuff
+	dobin rel/riak/bin/*
 
-    # install /etc/riak stuff
-    insinto /etc/${PN}
-    doins rel/riak/etc/*
+	# install /etc/riak stuff
+	# adjust config to used flags
+	if ! use kpoll; then
+		sed -i -e '/+K true/d' rel/${PN}/etc/vm.args || die
+	fi
 
-    # create neccessary directories
-    keepdir /var/lib/${PN}/{bitcask,ring}
-    keepdir /var/log/${PN}/sasl
-    keepdir /var/run/${PN}
+	insinto /etc/${PN}
+	doins rel/riak/etc/*
 
-    # change owner to riak
-    fowners riak.riak /var/lib/${PN}
-    fowners riak.riak /var/lib/${PN}/ring
-    fowners riak.riak /var/lib/${PN}/bitcask
-    fowners riak.riak /var/log/${PN}
-    fowners riak.riak /var/log/${PN}/sasl
-    fowners riak.riak /var/run/${PN}
+	# create neccessary directories
+	keepdir /var/lib/${PN}/{bitcask,ring}
+	keepdir /var/log/${PN}/sasl
+	keepdir /run/${PN}
 
-    # create docs
-    doman doc/man/man1/*
-    dodoc doc/*.txt
+	# change owner to riak
+	fowners riak.riak /var/lib/${PN}
+	fowners riak.riak /var/lib/${PN}/ring
+	fowners riak.riak /var/lib/${PN}/bitcask
+	fowners riak.riak /var/log/${PN}
+	fowners riak.riak /var/log/${PN}/sasl
+	fowners riak.riak /run/${PN}
 
-    # init.d file
-    newinitd "${FILESDIR}/${PN}-${MAJ_PV}.${MED_PV}.${MIN_PV}.initd" ${PN}
-    newconfd "${FILESDIR}/${PN}-${MAJ_PV}.${MED_PV}.${MIN_PV}.confd" ${PN}
+	# create docs
+	doman doc/man/man1/*
+	dodoc doc/*.txt
+
+	# init.d file
+	newinitd "${FILESDIR}/${PN}-${MAJ_PV}.${MED_PV}.${MIN_PV}.initd" ${PN}
+	newconfd "${FILESDIR}/${PN}-${MAJ_PV}.${MED_PV}.${MIN_PV}.confd" ${PN}
 
 }
 
 pkg_postinst() {
-    ewarn "The default user to run riak is 'riak'"
+	ewarn "The default user to run riak is 'riak'"
 
-    local ULIMIT=$(ulimit -n)
-    if [[ $ULIMIT < 4096 ]]; then
-        ewarn "Current ulimit -n is $ULIMIT. 4096 is the recommended minimum."
-    fi
+	local ULIMIT=$(ulimit -n)
+	if [[ $ULIMIT < 4096 ]]; then
+		ewarn "Current ulimit -n is $ULIMIT. 4096 is the recommended minimum."
+	fi
 }
 
