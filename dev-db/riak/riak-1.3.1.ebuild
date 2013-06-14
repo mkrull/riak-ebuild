@@ -87,7 +87,7 @@ pkg_postinst() {
 
     local ULIMIT=$(ulimit -n)
     if [[ $ULIMIT < 4096 ]]; then
-        ewarn "Current open files limit is $ULIMIT. 4096 is the recommended minimum."
+        ewarn "Current ulimit -n is $ULIMIT. 4096 is the recommended minimum."
     fi
 }
 

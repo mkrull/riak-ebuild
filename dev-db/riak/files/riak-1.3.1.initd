@@ -28,7 +28,7 @@ stop() {
     ebegin "Stopping ${SVCNAME}"
     /usr/bin/riak stop
     # hacky.. fix it
-    local EPMD=$(ps aux|grep '/usr/lib/riak/erts-5.8.5/bin/epmd'|grep -v grep|awk '{ print $2 }')
+    local EPMD=$(ps aux|grep -e '/usr/lib/riak/erts-.*/bin/epmd'|grep -v grep|awk '{ print $2 }')
     kill $EPMD
     eend $?
 }
