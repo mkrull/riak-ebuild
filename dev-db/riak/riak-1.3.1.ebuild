@@ -41,8 +41,7 @@ src_prepare() {
 }
 
 src_compile() {
-	# emake failed silently.. so
-	make rel
+	MAKEOPTS="-j1" emake rel
 }
 
 src_install() {

@@ -4,20 +4,20 @@
 # $Header: $
 
 depend() {
-    need net
+	need net
 }
 
 start() {
-    ebegin "Start ${SVCNAME}"
-    if [[ "${RIAK_USER}" != "riak" && "${RIAK_USER}" != "root" ]]; then
-        ewarn "make sure ${RIAK_USER} has the permission to use riaks files and directories"
-    fi
+	ebegin "Start ${SVCNAME}"
+	if [[ "${RIAK_USER}" != "riak" && "${RIAK_USER}" != "root" ]]; then
+		ewarn "make sure ${RIAK_USER} has the permission to use riaks files and directories"
+	fi
 
 	# warn on low ulimit
-    local ULIMIT=$(ulimit -n)
-    if [[ $ULIMIT < 4096 ]]; then
-        ewarn "Current ulimit -n is $ULIMIT. 4096 is the recommended minimum."
-    fi
+	local ULIMIT=$(ulimit -n)
+	if [[ $ULIMIT < 4096 ]]; then
+		ewarn "Current ulimit -n is $ULIMIT. 4096 is the recommended minimum."
+	fi
 
 	# warn on insecure cert and key permissions
 	if [[ -f /etc/riak/cert.pem ]]; then
@@ -35,27 +35,24 @@ start() {
 		fi
 	fi
 
-    start-stop-daemon --background --start \
-        --user ${RIAK_USER} \
-        --exec /usr/bin/riak -- start
-    eend $?
+	start-stop-daemon --background --start --user ${RIAK_USER} --exec /usr/bin/riak -- start
+	eend $?
 }
 
 stop() {
-    ebegin "Stopping ${SVCNAME}"
-    /usr/bin/riak stop
-    # hacky.. fix it
-    local EPMD=$(ps aux|grep -e '/usr/lib/riak/erts-.*/bin/epmd'|grep -v grep|awk '{ print $2 }')
-    kill $EPMD
-    eend $?
+	ebegin "Stopping ${SVCNAME}"
+	/usr/bin/riak stop 2>&1 > /dev/null
+	local EPMD=$(ps aux|grep -e '/usr/lib/riak/erts-.*/bin/epmd'|grep -v grep|awk '{ print $2 }')
+	kill $EPMD
+	eend $?
 }
 
 status() {
-    ebegin "${SVCNAME} member status"
-    /usr/bin/riak-admin member_status
+	ebegin "${SVCNAME} member status"
+	/usr/bin/riak-admin member_status
 
-    ebegin "${SVCNAME} ring status"
-    /usr/bin/riak-admin ring_status
-    eend $?
+	ebegin "${SVCNAME} ring status"
+	/usr/bin/riak-admin ring_status
+	eend $?
 }
 
