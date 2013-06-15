@@ -1,5 +1,5 @@
 #!/sbin/runscript
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -7,6 +7,7 @@ depend() {
 	need net
 }
 
+# TODO run multiple instances
 start() {
 	ebegin "Start ${SVCNAME}"
 	if [[ "${RIAK_USER}" != "riak" && "${RIAK_USER}" != "root" ]]; then
@@ -42,6 +43,9 @@ start() {
 stop() {
 	ebegin "Stopping ${SVCNAME}"
 	/usr/bin/riak stop 2>&1 > /dev/null
+
+	einfo "Stopping epmd"
+	# TODO do not kill epmd if another riak instance is running
 	local EPMD=$(ps aux|grep -e '/usr/lib/riak/erts-.*/bin/epmd'|grep -v grep|awk '{ print $2 }')
 	kill $EPMD
 	eend $?
@@ -51,8 +55,7 @@ status() {
 	ebegin "${SVCNAME} member status"
 	/usr/bin/riak-admin member_status
 
-	ebegin "${SVCNAME} ring status"
+	einfo "${SVCNAME} ring status"
 	/usr/bin/riak-admin ring_status
 	eend $?
 }
-
