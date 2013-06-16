@@ -1,2 +1,4 @@
-# DO not change the riak user unless you are sure what you are doing
 RIAK_USER="riak"
+RIAK_ERTS_PATH="/usr/lib/riak/erts-5.9.3.1"
+RIAK_EXEC="/usr/bin/riak"
+

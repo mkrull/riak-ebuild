@@ -10,52 +10,35 @@ depend() {
 # TODO run multiple instances
 start() {
 	ebegin "Start ${SVCNAME}"
-	if [[ "${RIAK_USER}" != "riak" && "${RIAK_USER}" != "root" ]]; then
-		ewarn "make sure ${RIAK_USER} has the permission to use riaks files and directories"
-	fi
 
 	# warn on low ulimit
-	local ULIMIT=$(ulimit -n)
-	if [[ $ULIMIT < 4096 ]]; then
-		ewarn "Current ulimit -n is $ULIMIT. 4096 is the recommended minimum."
+	local ulimit=$(ulimit -n)
+	if [[ $ulimit < 4096 ]]; then
+		ewarn "Current ulimit -n is $ulimit. 4096 is the recommended minimum."
 	fi
 
-	# warn on insecure cert and key permissions
-	if [[ -f /etc/riak/cert.pem ]]; then
-		local CERT_P=$(stat -c %a /etc/riak/cert.pem)
-		if [[ $CERT_P != 600 ]]; then
-			ewarn "Check the permissions on the riak certificate /etc/riak/cert.pem."
-			ewarn "Permissions are $CERT_P, recommendet are 600."
-		fi
-	fi
-	if [[ -f /etc/riak/key.pem ]]; then
-		local KEY_P=$(stat -c %a /etc/riak/key.pem)
-		if [[ $KEY_P != 600 ]]; then
-			ewarn "Check the permissions on the riak key /etc/riak/key.pem"
-			ewarn "Permissions are $KEY_P, recommendet are 600."
-		fi
-	fi
-
-	start-stop-daemon --background --start --user ${RIAK_USER} --exec /usr/bin/riak -- start
+	start-stop-daemon --background --start --user ${RIAK_USER} \
+			--exec ${RIAK_EXEC} -- start
 	eend $?
 }
 
 stop() {
 	ebegin "Stopping ${SVCNAME}"
-	/usr/bin/riak stop 2>&1 > /dev/null
+	local beam=$(pidof ${RIAK_ERTS_PATH}/bin/beam.smp)
+    # if riak stop fails use more force
+	${RIAK_EXEC} stop 2>&1 > /dev/null || start-stop-daemon \
+			--stop --quiet --retry=TERM/30/KILL/5 \
+			--user ${RIAK_USER} --exec $beam
 
 	einfo "Stopping epmd"
-	# TODO do not kill epmd if another riak instance is running
-	local EPMD=$(ps aux|grep -e '/usr/lib/riak/erts-.*/bin/epmd'|grep -v grep|awk '{ print $2 }')
-	kill $EPMD
+	local epmd=$(pidof ${RIAK_ERTS_PATH}/bin/epmd)
+	[[ $epmd ]] && kill $epmd
+
 	eend $?
 }
 
-status() {
-	ebegin "${SVCNAME} member status"
-	/usr/bin/riak-admin member_status
-
-	einfo "${SVCNAME} ring status"
-	/usr/bin/riak-admin ring_status
+reload() {
+	ebegin "Reloading ${SVCNAME}"
+	${RIAK_EXEC} restart
 	eend $?
 }

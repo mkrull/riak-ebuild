@@ -12,7 +12,7 @@ MIN_PV="$(get_version_component_range 3)"
 
 DESCRIPTION="An open source, highly scalable, schema-free document-oriented database"
 HOMEPAGE="http://www.basho.com/"
-SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/${MAJ_PV}.${MED_PV}.${MIN_PV}/${PN}-${MAJ_PV}.${MED_PV}.${MIN_PV}.tar.gz"
+SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/${PV}/${PN}-${PV}.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -41,13 +41,13 @@ pkg_setup() {
 
 src_prepare() {
 	# configure gentoo/linux specific directories
-	epatch "${FILESDIR}/${MAJ_PV}.${MED_PV}.${MIN_PV}-fix-directories.patch"
+	epatch "${FILESDIR}/${PV}-fix-directories.patch"
 	sed -i -e '/XLDFLAGS="$(LDFLAGS)"/d' -e 's/ $(CFLAGS)//g' deps/erlang_js/c_src/Makefile || die
 }
 
 src_compile() {
 	# build fails with MAKEOPTS > -j1
-	MAKEOPTS="-j1" emake rel
+	emake -j1 rel
 }
 
 src_install() {
@@ -97,11 +97,4 @@ src_install() {
 
 	# TODO logrotate
 
-}
-
-pkg_postinst() {
-	local ulimit=$(ulimit -n)
-	if [[ $ulimit < 4096 ]]; then
-		ewarn "Current ulimit -n is $ulimit. 4096 is the recommended minimum."
-	fi
 }
