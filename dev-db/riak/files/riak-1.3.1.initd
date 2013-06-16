@@ -7,7 +7,6 @@ depend() {
 	need net
 }
 
-# TODO run multiple instances
 start() {
 	ebegin "Start ${SVCNAME}"
 
@@ -25,7 +24,7 @@ start() {
 stop() {
 	ebegin "Stopping ${SVCNAME}"
 	local beam=$(pidof ${RIAK_ERTS_PATH}/bin/beam.smp)
-    # if riak stop fails use more force
+	# if riak stop fails use more force
 	${RIAK_EXEC} stop 2>&1 > /dev/null || start-stop-daemon \
 			--stop --quiet --retry=TERM/30/KILL/5 \
 			--user ${RIAK_USER} --exec $beam

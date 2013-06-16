@@ -96,5 +96,4 @@ src_install() {
 	newconfd "${FILESDIR}/riak-${MAJ_PV}.${MED_PV}.${MIN_PV}.confd" riak
 
 	# TODO logrotate
-
 }
