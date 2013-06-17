@@ -3,6 +3,11 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
+extra_started_commands="reload"
+
+RIAK_PIDFILE="/run/riak/${SVCNAME}.pid"
+RIAK_STARTUP_TIMEOUT=10
+
 depend() {
 	need net
 }
@@ -16,18 +21,45 @@ start() {
 		ewarn "Current ulimit -n is $ulimit. 4096 is the recommended minimum."
 	fi
 
-	start-stop-daemon --background --start --user ${RIAK_USER} \
-			--exec ${RIAK_EXEC} -- start
+	start-stop-daemon --background --start --user "${RIAK_USER}" \
+			--pidfile "${RIAK_PIDFILE}" \
+			--exec "${RIAK_EXEC}" -- start
+
+	# wait for riak to start up before creating pidfile
+	while [[ $RIAK_STARTUP_TIMEOUT ]]; do
+
+		# ping riak
+		local res=$(${RIAK_EXEC} ping)
+		local beam=$(pidof "${RIAK_ERTS_PATH}/bin/beam.smp")
+
+		# on pong it has fully started
+		if [[ $res =~ "pong" ]]; then
+			[[ $beam ]] && echo -n $beam > "${RIAK_PIDFILE}"
+			break
+		else
+			# let pidfile creation time out
+			RIAK_STARTUP_TIMEOUT=$(expr "${RIAK_STARTUP_TIMEOUT}" - 1)
+		fi
+
+		[[ $RIAK_STARTUP_TIMEOUT ]] || ewarn "Slow startup. No pidfile created."
+	done
+
 	eend $?
 }
 
 stop() {
 	ebegin "Stopping ${SVCNAME}"
-	local beam=$(pidof ${RIAK_ERTS_PATH}/bin/beam.smp)
+	local beam="${RIAK_ERTS_PATH}/bin/beam.smp"
+
 	# if riak stop fails use more force
-	${RIAK_EXEC} stop 2>&1 > /dev/null || start-stop-daemon \
+	if [ $(${RIAK_EXEC} stop 2>&1 > /dev/null) ]; then
+		start-stop-daemon \
 			--stop --quiet --retry=TERM/30/KILL/5 \
 			--user ${RIAK_USER} --exec $beam
+		[[ -f "${RIAK_EXEC}" ]] && unlink "${RIAK_PIDFILE}"
+	else
+		[[ -f "${RIAK_EXEC}" ]] && unlink "${RIAK_PIDFILE}"
+	fi
 
 	einfo "Stopping epmd"
 	local epmd=$(pidof ${RIAK_ERTS_PATH}/bin/epmd)
@@ -38,6 +70,20 @@ stop() {
 
 reload() {
 	ebegin "Reloading ${SVCNAME}"
-	${RIAK_EXEC} restart
+	${RIAK_EXEC} restart 2>&1 > /dev/null
 	eend $?
+}
+
+status() {
+	local res=$(${RIAK_EXEC} ping)
+	local epmd=$(pidof ${RIAK_ERTS_PATH}/bin/epmd)
+	if [[ $res =~ "pong" ]]; then
+		einfo "status: started"
+	elif [[ -f "${RIAK_PIDFILE}" ]]; then
+		eerror "status: crashed"
+	else
+		# cleanup
+		[[ $epmd ]] && kill $epmd
+		einfo "status: stopped"
+	fi
 }
