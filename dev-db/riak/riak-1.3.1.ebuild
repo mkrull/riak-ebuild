@@ -6,13 +6,15 @@ EAPI=5
 
 inherit versionator
 
+# needed to download the archive
 MAJ_PV="$(get_major_version)"
 MED_PV="$(get_version_component_range 2)"
 MIN_PV="$(get_version_component_range 3)"
 
+# build time dependency
 LEVELDB_PV="1.3.0"
-LEVELDB_URI="https://github.com/basho/leveldb/archive/${LEVELDB_PV}.zip"
-LEVELDB_P="leveldb-${LEVELDB_PV}.zip"
+LEVELDB_URI="https://github.com/basho/leveldb/archive/${LEVELDB_PV}.tar.gz"
+LEVELDB_P="leveldb-${LEVELDB_PV}.tar.gz"
 LEVELDB_WD="${WORKDIR}/leveldb-${LEVELDB_PV}"
 LEVELDB_TARGET_LOCATION="${S}/deps/eleveldb/c_src/leveldb"
 
@@ -33,12 +35,8 @@ RDEPEND="
 >=dev-lang/erlang-15.2.3.1[smp]
 kpoll? ( >=dev-lang/erlang-15.2.3.1[kpoll] )
 "
-# git is used during build to manage parts internally
-# nothing gets actually fetched
-DEPEND="${RDEPEND}
-app-arch/unzip
-dev-vcs/git
-"
+
+DEPEND="${RDEPEND}"
 
 pkg_setup() {
 	ebegin "Creating riak user and group"
@@ -51,7 +49,13 @@ pkg_setup() {
 src_prepare() {
 	epatch "${FILESDIR}/${PV}-fix-directories.patch"
 	sed -i -e '/XLDFLAGS="$(LDFLAGS)"/d' -e 's/ $(CFLAGS)//g' deps/erlang_js/c_src/Makefile || die
+
+	# avoid fetching deps via git that are already available
 	ln -s ${LEVELDB_WD} ${LEVELDB_TARGET_LOCATION}
+	mkdir -p ${S}/deps/riaknostic/deps
+	ln -s ${S}/deps/lager ${S}/deps/riaknostic/deps
+	ln -s ${S}/deps/meck ${S}/deps/riaknostic/deps
+	ln -s ${S}/deps/getopt ${S}/deps/riaknostic/deps
 }
 
 src_compile() {
@@ -98,8 +102,8 @@ src_install() {
 	use doc && dodoc doc/*.txt
 
 	# init.d file
-	newinitd "${FILESDIR}/riak-${MAJ_PV}.${MED_PV}.${MIN_PV}.initd" riak
-	newconfd "${FILESDIR}/riak-${MAJ_PV}.${MED_PV}.${MIN_PV}.confd" riak
+	newinitd "${FILESDIR}/${P}.initd" riak
+	newconfd "${FILESDIR}/${P}.confd" riak
 
 	# TODO logrotate
 }
