@@ -14,11 +14,11 @@ LEVELDB_PV="1.3.0"
 LEVELDB_URI="https://github.com/basho/leveldb/archive/${LEVELDB_PV}.zip"
 LEVELDB_P="leveldb-${LEVELDB_PV}.zip"
 LEVELDB_WD="${WORKDIR}/leveldb-${LEVELDB_PV}"
-LEVELDB_TARGET_LOCATION="${WORKDIR}/${PN}-${PV}/deps/eleveldb/c_src/leveldb"
+LEVELDB_TARGET_LOCATION="${S}/deps/eleveldb/c_src/leveldb"
 
 DESCRIPTION="An open source, highly scalable, schema-free document-oriented database"
 HOMEPAGE="http://www.basho.com/"
-SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/${PV}/${PN}-${PV}.tar.gz
+SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/${PV}/${P}.tar.gz
 ${LEVELDB_URI} -> ${LEVELDB_P}
 "
 
