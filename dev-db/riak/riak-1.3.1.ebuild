@@ -52,10 +52,10 @@ src_prepare() {
 
 	# avoid fetching deps via git that are already available
 	ln -s ${LEVELDB_WD} ${LEVELDB_TARGET_LOCATION}
-	mkdir -p ${S}/deps/riaknostic/deps
-	ln -s ${S}/deps/lager ${S}/deps/riaknostic/deps
-	ln -s ${S}/deps/meck ${S}/deps/riaknostic/deps
-	ln -s ${S}/deps/getopt ${S}/deps/riaknostic/deps
+	mkdir -p "${S}"/deps/riaknostic/deps
+	ln -s "${S}"/deps/lager "${S}"/deps/riaknostic/deps
+	ln -s "${S}"/deps/meck "${S}"/deps/riaknostic/deps
+	ln -s "${S}"/deps/getopt "${S}"/deps/riaknostic/deps
 }
 
 src_compile() {
