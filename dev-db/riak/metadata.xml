@@ -4,7 +4,6 @@
 	<longdescription lang="en">
 	</longdescription>
 	<use>
-		<flag name="hipe">Require HIPE enabled Erlang (HIgh Performance Erlang)</flag>
 		<flag name="kpoll">Enable kernel polling support</flag>	
 	</use>
 </pkgmetadata>
