@@ -27,13 +27,12 @@ ${LEVELDB_URI} -> ${LEVELDB_P}
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="kpoll doc"
+IUSE="doc"
 
 # TODO test non smp install
 RDEPEND="
 <dev-lang/erlang-16
 >=dev-lang/erlang-15.2.3.1[smp]
-kpoll? ( >=dev-lang/erlang-15.2.3.1[kpoll] )
 "
 
 DEPEND="${RDEPEND}"
@@ -75,11 +74,6 @@ src_install() {
 	dobin rel/riak/bin/*
 
 	# install /etc/riak
-	# adjust config to used flags
-	if ! use kpoll; then
-		sed -i -e '/+K true/d' rel/riak/etc/vm.args || die
-	fi
-
 	insinto /etc/riak
 	doins rel/riak/etc/*
 
@@ -106,4 +100,8 @@ src_install() {
 	newconfd "${FILESDIR}/${P}.confd" riak
 
 	# TODO logrotate
+}
+
+pkg_postinst() {
+	ewarn "To use kernel polling build erlang with the 'kpoll' useflag"
 }
