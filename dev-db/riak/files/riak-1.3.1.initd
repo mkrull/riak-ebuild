@@ -5,9 +5,6 @@
 
 extra_started_commands="reload"
 
-RIAK_PIDFILE="/run/riak/${SVCNAME}.pid"
-RIAK_STARTUP_TIMEOUT=10
-
 depend() {
 	need net
 }
@@ -26,7 +23,7 @@ start() {
 			--exec "${RIAK_EXEC}" -- start
 
 	# wait for riak to start up before creating pidfile
-	while [[ $RIAK_STARTUP_TIMEOUT ]]; do
+	while [[ ${RIAK_STARTUP_TIMEOUT} ]]; do
 
 		# ping riak
 		local res=$(${RIAK_EXEC} ping)
@@ -45,7 +42,7 @@ start() {
 			RIAK_STARTUP_TIMEOUT=$(expr "${RIAK_STARTUP_TIMEOUT}" - 1)
 		fi
 
-		[[ $RIAK_STARTUP_TIMEOUT ]] || ewarn "Slow startup. No pidfile created."
+		[[ ${RIAK_STARTUP_TIMEOUT} ]] || ewarn "Slow startup. No pidfile created."
 	done
 
 	eend $?
