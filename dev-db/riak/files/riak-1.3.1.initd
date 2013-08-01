@@ -89,7 +89,6 @@ reload() {
 status() {
 	local res=$("${RIAK_EXEC}" ping)
 	local epmd=$(pidof ${RIAK_ERTS_PATH}/bin/epmd)
-	local match="pong"
 	case $res in
 		*pong*)
 			einfo "status: started"

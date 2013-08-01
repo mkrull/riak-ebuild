@@ -49,8 +49,8 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}/${PV}-fix-directories.patch"
-	sed -i
-		-e '/XLDFLAGS="$(LDFLAGS)"/d'
+	sed -i \
+		-e '/XLDFLAGS="$(LDFLAGS)"/d' \
 		-e 's/ $(CFLAGS)//g' deps/erlang_js/c_src/Makefile || die
 
 	# avoid fetching deps via git that are already available
