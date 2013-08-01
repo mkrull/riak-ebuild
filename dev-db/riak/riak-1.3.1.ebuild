@@ -4,7 +4,7 @@
 
 EAPI=5
 
-inherit versionator
+inherit versionator eutils user
 
 # needed to download the archive
 MAJ_PV="$(get_major_version)"
@@ -23,7 +23,7 @@ LEVELDB_TARGET_LOCATION="${S}/deps/eleveldb/c_src/leveldb"
 DESCRIPTION="An open source, distributed database"
 HOMEPAGE="http://www.basho.com/"
 SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/${PV}/${P}.tar.gz
-${LEVELDB_URI} -> ${LEVELDB_P}
+	${LEVELDB_URI} -> ${LEVELDB_P}
 "
 
 LICENSE="Apache-2.0"
@@ -33,8 +33,8 @@ IUSE="doc"
 
 # TODO test non smp install
 RDEPEND="
-<dev-lang/erlang-16
->=dev-lang/erlang-15.2.3.1[smp]
+	<dev-lang/erlang-16
+	>=dev-lang/erlang-15.2.3.1[smp]
 "
 
 DEPEND="${RDEPEND}"
@@ -49,14 +49,16 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}/${PV}-fix-directories.patch"
-	sed -i -e '/XLDFLAGS="$(LDFLAGS)"/d' -e 's/ $(CFLAGS)//g' deps/erlang_js/c_src/Makefile || die
+	sed -i
+		-e '/XLDFLAGS="$(LDFLAGS)"/d'
+		-e 's/ $(CFLAGS)//g' deps/erlang_js/c_src/Makefile || die
 
 	# avoid fetching deps via git that are already available
-	ln -s ${LEVELDB_WD} ${LEVELDB_TARGET_LOCATION}
-	mkdir -p "${S}"/deps/riaknostic/deps
-	ln -s "${S}"/deps/lager "${S}"/deps/riaknostic/deps
-	ln -s "${S}"/deps/meck "${S}"/deps/riaknostic/deps
-	ln -s "${S}"/deps/getopt "${S}"/deps/riaknostic/deps
+	ln -s ${LEVELDB_WD} ${LEVELDB_TARGET_LOCATION} || die
+	mkdir -p "${S}"/deps/riaknostic/deps || die
+	ln -s "${S}"/deps/lager "${S}"/deps/riaknostic/deps || die
+	ln -s "${S}"/deps/meck "${S}"/deps/riaknostic/deps || die
+	ln -s "${S}"/deps/getopt "${S}"/deps/riaknostic/deps || die
 }
 
 src_compile() {
@@ -67,10 +69,10 @@ src_compile() {
 src_install() {
 	# install /usr/lib
 	insinto /usr/lib/riak
-	cp -R rel/riak/lib "${D}"/usr/lib/riak
-	cp -R rel/riak/releases "${D}"/usr/lib/riak
-	cp -R rel/riak/erts* "${D}"/usr/lib/riak
-	chmod 0755 "${D}"/usr/lib/riak/erts*/bin/*
+	doins -r rel/riak/lib
+	doins -r rel/riak/releases
+	doins -r rel/riak/erts*
+	fperms 0755 /usr/lib/riak/erts*/bin/*
 
 	# install /usr/bin
 	dobin rel/riak/bin/*
@@ -86,12 +88,10 @@ src_install() {
 	# create neccessary directories
 	keepdir /var/lib/riak/{bitcask,ring}
 	keepdir /var/log/riak/sasl
-	keepdir /run/riak
 
 	# change owner to riak
 	fowners -R riak:riak /var/lib/riak
 	fowners -R riak:riak /var/log/riak
-	fowners riak:riak /run/riak
 
 	# create docs
 	doman doc/man/man1/*
