@@ -4,7 +4,7 @@
 
 EAPI=5
 
-inherit versionator eutils user
+inherit versionator eutils user multilib toolchain-funcs
 
 # needed to download the archive
 MAJ_PV="$(get_major_version)"
@@ -29,6 +29,7 @@ SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/$
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
+# TODO luwak useflag and patches
 IUSE="doc"
 
 # TODO test non smp install
@@ -50,8 +51,7 @@ pkg_setup() {
 src_prepare() {
 	epatch "${FILESDIR}/${PV}-fix-directories.patch"
 	sed -i \
-		-e '/XLDFLAGS="$(LDFLAGS)"/d' \
-		-e 's/ $(CFLAGS)//g' deps/erlang_js/c_src/Makefile || die
+		-e '/XLDFLAGS="$(LDFLAGS)"/d' deps/erlang_js/c_src/Makefile || die
 
 	# avoid fetching deps via git that are already available
 	ln -s ${LEVELDB_WD} ${LEVELDB_TARGET_LOCATION} || die
@@ -63,12 +63,13 @@ src_prepare() {
 
 src_compile() {
 	# build fails with MAKEOPTS > -j1
-	emake -j1 rel
+	emake CC=$(tc-getCC) CXX=$(tc-getCXX) AR=$(tc-getAR) rel
 }
 
 src_install() {
 	# install /usr/lib
-	insinto /usr/lib/riak
+	# TODO test on x86
+	insinto /usr/$(get_libdir)/riak
 	doins -r rel/riak/lib
 	doins -r rel/riak/releases
 	doins -r rel/riak/erts*

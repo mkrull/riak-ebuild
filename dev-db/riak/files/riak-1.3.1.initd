@@ -12,6 +12,13 @@ depend() {
 start() {
 	ebegin "Start ${SVCNAME}"
 
+	# create pid dir
+	local pid_dir=$(dirname "${RIAK_PIDFILE}")
+	if [ ! -d $pid_dir ]; then
+		einfo "Creating $pid_dir."
+		mkdir -p $pid_dir && chown ${RIAK_USER} $pid_dir
+	fi
+
 	# warn on low ulimit
 	local ulimit=$(ulimit -n)
 	if [ "$ulimit" -lt "4096" ]; then
@@ -22,7 +29,7 @@ start() {
 			--pidfile "${RIAK_PIDFILE}" \
 			--exec "${RIAK_EXEC}" -- start
 
-	# wait for riak to start up before creating pidfile
+	# wait for riak to start before creating pidfile
 	while [ "${RIAK_STARTUP_TIMEOUT}" -ge "0" ]; do
 		# ping riak
 		local res=$("${RIAK_EXEC}" ping)
