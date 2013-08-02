@@ -51,6 +51,7 @@ start() {
 						break
 					fi
 				done
+				# break the outer while loop
 				break
 				;;
 			*)

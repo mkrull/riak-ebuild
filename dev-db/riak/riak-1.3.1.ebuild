@@ -64,7 +64,7 @@ src_prepare() {
 
 src_compile() {
 	# build fails with MAKEOPTS > -j1
-	emake \
+	emake -j1 \
 		CC=$(tc-getCC) \
 		CXX=$(tc-getCXX) \
 		AR=$(tc-getAR) \
