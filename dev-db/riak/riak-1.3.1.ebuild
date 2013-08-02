@@ -50,6 +50,7 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}/${PV}-fix-directories.patch"
+	epatch "${FILESDIR}/${PV}-honor-cflags.patch"
 	sed -i \
 		-e '/XLDFLAGS="$(LDFLAGS)"/d' deps/erlang_js/c_src/Makefile || die
 
@@ -63,7 +64,12 @@ src_prepare() {
 
 src_compile() {
 	# build fails with MAKEOPTS > -j1
-	emake CC=$(tc-getCC) CXX=$(tc-getCXX) AR=$(tc-getAR) rel
+	emake \
+		CC=$(tc-getCC) \
+		CXX=$(tc-getCXX) \
+		AR=$(tc-getAR) \
+		LD=$(tc-getLD) \
+		STRIP=$(tc-getSTRIP) rel
 }
 
 src_install() {

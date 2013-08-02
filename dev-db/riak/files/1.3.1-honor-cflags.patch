@@ -1,0 +1,14 @@
+--- a/deps/eleveldb/rebar.config	2013-01-30 01:06:04.000000000 +0100
++++ b/deps/eleveldb/rebar.config	2013-08-02 12:40:30.188055240 +0200
+@@ -5,9 +5,9 @@
+ 
+ {port_env, [
+ 	     %% Make sure to set -fPIC when compiling leveldb
+-             {"CFLAGS", "$CFLAGS -Wall -O3 -fPIC"},
+-             {"CXXFLAGS", "$CXXFLAGS -Wall -O3 -fPIC"},
+-             {"DRV_CFLAGS", "$DRV_CFLAGS -O3 -Wall -I c_src/leveldb/include"},
++             {"CFLAGS", "$CFLAGS"},
++             {"CXXFLAGS", "$CXXFLAGS"},
++             {"DRV_CFLAGS", "$DRV_CFLAGS -I c_src/leveldb/include"},
+              {"DRV_LDFLAGS", "$DRV_LDFLAGS c_src/leveldb/libleveldb.a c_src/system/lib/libsnappy.a -lstdc++"}
+              ]}.
