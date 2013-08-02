@@ -77,7 +77,7 @@ src_install() {
 	fperms -R 0755 /usr/$lib_dir/riak/erts-5.9.3.1/bin
 
 	# install /usr/bin
-	dobin -r rel/riak/bin
+	dobin rel/riak/bin/*
 
 	# install /etc/riak
 	insinto /etc/riak
