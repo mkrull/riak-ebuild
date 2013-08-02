@@ -81,7 +81,7 @@ src_install() {
 
 	# install /etc/riak
 	insinto /etc/riak
-	doins -r rel/riak/etc
+	doins rel/riak/etc/*
 
 	# restrict access to cert and key
 	fperms 0600 /etc/riak/cert.pem
