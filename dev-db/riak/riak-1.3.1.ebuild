@@ -69,18 +69,19 @@ src_compile() {
 src_install() {
 	# install /usr/lib
 	# TODO test on x86
-	insinto /usr/$(get_libdir)/riak
+	local lib_dir=$(get_libdir)
+	insinto /usr/$lib_dir/riak
 	doins -r rel/riak/lib
 	doins -r rel/riak/releases
-	doins -r rel/riak/erts*
-	fperms -R 0755 /usr/lib/riak/erts-5.9.3.1/bin
+	doins -r rel/riak/erts-5.9.3.1
+	fperms -R 0755 /usr/$libdir/riak/erts-5.9.3.1/bin
 
 	# install /usr/bin
-	dobin rel/riak/bin/*
+	dobin -r rel/riak/bin
 
 	# install /etc/riak
 	insinto /etc/riak
-	doins rel/riak/etc/*
+	doins -r rel/riak/etc
 
 	# restrict access to cert and key
 	fperms 0600 /etc/riak/cert.pem
