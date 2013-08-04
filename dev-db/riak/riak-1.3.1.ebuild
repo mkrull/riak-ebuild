@@ -69,18 +69,18 @@ src_compile() {
 		CXX=$(tc-getCXX) \
 		AR=$(tc-getAR) \
 		LD=$(tc-getLD) \
-		STRIP=$(tc-getSTRIP) rel
+		STRIP="" rel
 }
 
 src_install() {
 	# install /usr/lib
 	# TODO test on x86
 	local lib_dir=$(get_libdir)
-	insinto /usr/$lib_dir/riak
+	insinto /usr/${lib_dir}/riak
 	doins -r rel/riak/lib
 	doins -r rel/riak/releases
 	doins -r rel/riak/erts-5.9.3.1
-	fperms -R 0755 /usr/$lib_dir/riak/erts-5.9.3.1/bin
+	fperms -R 0755 /usr/${lib_dir}/riak/erts-5.9.3.1/bin
 
 	# install /usr/bin
 	dobin rel/riak/bin/*
