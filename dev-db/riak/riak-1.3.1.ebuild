@@ -29,26 +29,27 @@ SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/$
 # prestripped files
 # copied over from the live system as installed with dev/lang-erlang
 # TODO get versions dynamicaly
+LIB_DIR=$(get_libdir)
 QA_PRESTRIPPED="
-	rel/riak/lib/asn1-1.8/priv/lib/asn1_erl_nif.so
-	rel/riak/lib/crypto-2.2/priv/lib/crypto.so
-	rel/riak/lib/os_mon-2.2.10/priv/bin/memsup
-	rel/riak/lib/os_mon-2.2.10/priv/bin/cpu_sup
-	rel/riak/lib/runtime_tools-1.8.9/priv/lib/dyntrace.so
-	rel/riak/lib/runtime_tools-1.8.9/priv/lib/trace_ip_drv.so
-	rel/riak/lib/runtime_tools-1.8.9/priv/lib/trace_file_drv.so
-	rel/riak/erts-5.9.3.1/bin/beam
-	rel/riak/erts-5.9.3.1/bin/beam.smp
-	rel/riak/erts-5.9.3.1/bin/child_setup
-	rel/riak/erts-5.9.3.1/bin/inet_gehost
-	rel/riak/erts-5.9.3.1/bin/heart
-	rel/riak/erts-5.9.3.1/bin/erlexec
-	rel/riak/erts-5.9.3.1/bin/erlc
-	rel/riak/erts-5.9.3.1/bin/escript
-	rel/riak/erts-5.9.3.1/bin/ct_run
-	rel/riak/erts-5.9.3.1/bin/run_erl
-	rel/riak/erts-5.9.3.1/bin/to_erl
-	rel/riak/erts-5.9.3.1/bin/epmd
+	/usr/${LIB_DIR}/riak/lib/asn1-1.8/priv/lib/asn1_erl_nif.so
+	/usr/${LIB_DIR}/riak/lib/crypto-2.2/priv/lib/crypto.so
+	/usr/${LIB_DIR}/riak/lib/os_mon-2.2.10/priv/bin/memsup
+	/usr/${LIB_DIR}/riak/lib/os_mon-2.2.10/priv/bin/cpu_sup
+	/usr/${LIB_DIR}/riak/lib/runtime_tools-1.8.9/priv/lib/dyntrace.so
+	/usr/${LIB_DIR}/riak/lib/runtime_tools-1.8.9/priv/lib/trace_ip_drv.so
+	/usr/${LIB_DIR}/riak/lib/runtime_tools-1.8.9/priv/lib/trace_file_drv.so
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/beam
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/beam.smp
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/child_setup
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/inet_gehost
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/heart
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/erlexec
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/erlc
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/escript
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/ct_run
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/run_erl
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/to_erl
+	/usr/${LIB_DIR}/riak/erts-5.9.3.1/bin/epmd
 "
 
 LICENSE="Apache-2.0"
@@ -100,12 +101,11 @@ src_compile() {
 src_install() {
 	# install /usr/lib
 	# TODO test on x86
-	local lib_dir=$(get_libdir)
-	insinto /usr/${lib_dir}/riak
+	insinto /usr/${LIB_DIR}/riak
 	doins -r rel/riak/lib
 	doins -r rel/riak/releases
 	doins -r rel/riak/erts-5.9.3.1
-	fperms -R 0755 /usr/${lib_dir}/riak/erts-5.9.3.1/bin
+	fperms -R 0755 /usr/${LIB_DIR}/riak/erts-5.9.3.1/bin
 
 	# install /usr/bin
 	dobin rel/riak/bin/*
