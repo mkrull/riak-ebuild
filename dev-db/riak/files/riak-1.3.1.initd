@@ -20,7 +20,7 @@ start() {
 	fi
 
 	# warn on low ulimit
-	local ulimit=$(ulimit -n)
+	local ulimit=$(grep 'Max open files' /proc/self/limits |tr -s ' '|cut -d' ' -f4)
 	if [ "$ulimit" -lt "4096" ]; then
 		ewarn "Current ulimit -n is $ulimit. 4096 is the recommended minimum."
 	fi

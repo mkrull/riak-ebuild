@@ -26,6 +26,31 @@ SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/$
 	${LEVELDB_URI} -> ${LEVELDB_P}
 "
 
+# prestripped files
+# copied over from the live system as installed with dev/lang-erlang
+# TODO get versions dynamicaly
+QA_PRESTRIPPED="
+	rel/riak/lib/asn1-1.8/priv/lib/asn1_erl_nif.so
+	rel/riak/lib/crypto-2.2/priv/lib/crypto.so
+	rel/riak/lib/os_mon-2.2.10/priv/bin/memsup
+	rel/riak/lib/os_mon-2.2.10/priv/bin/cpu_sup
+	rel/riak/lib/runtime_tools-1.8.9/priv/lib/dyntrace.so
+	rel/riak/lib/runtime_tools-1.8.9/priv/lib/trace_ip_drv.so
+	rel/riak/lib/runtime_tools-1.8.9/priv/lib/trace_file_drv.so
+	rel/riak/erts-5.9.3.1/bin/beam
+	rel/riak/erts-5.9.3.1/bin/beam.smp
+	rel/riak/erts-5.9.3.1/bin/child_setup
+	rel/riak/erts-5.9.3.1/bin/inet_gehost
+	rel/riak/erts-5.9.3.1/bin/heart
+	rel/riak/erts-5.9.3.1/bin/erlexec
+	rel/riak/erts-5.9.3.1/bin/erlc
+	rel/riak/erts-5.9.3.1/bin/escript
+	rel/riak/erts-5.9.3.1/bin/ct_run
+	rel/riak/erts-5.9.3.1/bin/run_erl
+	rel/riak/erts-5.9.3.1/bin/to_erl
+	rel/riak/erts-5.9.3.1/bin/epmd
+"
+
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
