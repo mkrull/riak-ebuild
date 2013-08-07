@@ -9,7 +9,7 @@ inherit versionator eutils user multilib toolchain-funcs
 # build time dependency
 # fork of the google project with riak specific changes
 # is used to build the eleveldb lib and gets removed before install
-LEVELDB_PV="1.3.0"
+LEVELDB_PV="${PV}"
 LEVELDB_URI="https://github.com/basho/leveldb/archive/${LEVELDB_PV}.tar.gz"
 LEVELDB_P="leveldb-${LEVELDB_PV}.tar.gz"
 LEVELDB_WD="${WORKDIR}/leveldb-${LEVELDB_PV}"
