@@ -26,37 +26,41 @@ SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/$
 	${LEVELDB_URI} -> ${LEVELDB_P}
 "
 
-LIB_DIR=$(get_libdir)
-# get version information for path of prestripped files
-ERTS_VERSION=$(grep release /usr/lib/erlang/releases/RELEASES | sed -r 's/.*"(([0-9]+\.){0,}[0-9]+)".*/\1/')
-RT_VERSION=$(find /usr/${LIB_DIR}/erlang/ -type d -name runtime_tools* | cut -d'-' -f2)
-OSMON_VERSION=$(find /usr/${LIB_DIR}/erlang/ -type d -name os_mon* | cut -d'-' -f2)
-CRYPTO_VERSION=$(find /usr/${LIB_DIR}/erlang/ -type d -name crypto* | cut -d'-' -f2)
-ASN1_VERSION=$(find /usr/${LIB_DIR}/erlang/ -type d -name asn1* | cut -d'-' -f2)
+QA_PRESTRIPPED=""
 
-# prestripped files
-# copied over from the live system as installed with dev/lang-erlang
-QA_PRESTRIPPED="
-	/usr/${LIB_DIR}/riak/lib/asn1-${ASN1_VERSION}/priv/lib/asn1_erl_nif.so
-	/usr/${LIB_DIR}/riak/lib/crypto-${CRYPTO_VERSION}/priv/lib/crypto.so
-	/usr/${LIB_DIR}/riak/lib/os_mon-${OSMON_VERSION}/priv/bin/memsup
-	/usr/${LIB_DIR}/riak/lib/os_mon-${OSMON_VERSION}/priv/bin/cpu_sup
-	/usr/${LIB_DIR}/riak/lib/runtime_tools-${RT_VERSION}/priv/lib/dyntrace.so
-	/usr/${LIB_DIR}/riak/lib/runtime_tools-${RT_VERSION}/priv/lib/trace_ip_drv.so
-	/usr/${LIB_DIR}/riak/lib/runtime_tools-${RT_VERSION}/priv/lib/trace_file_drv.so
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/beam
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/beam.smp
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/child_setup
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/inet_gethost
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/heart
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/erlexec
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/erlc
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/escript
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/ct_run
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/run_erl
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/to_erl
-	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/epmd
+set_prestripped() {
+	local lib_dir=$(get_libdir)
+	# get version information for path of prestripped files
+	local erts_version=$(grep release /usr/lib/erlang/releases/RELEASES | sed -r 's/.*"(([0-9]+\.){0,}[0-9]+)".*/\1/')
+	local rt_version=$(find /usr/${lib_dir}/erlang/ -type d -name runtime_tools* | cut -d'-' -f2)
+	local osmon_version=$(find /usr/${lib_dir}/erlang/ -type d -name os_mon* | cut -d'-' -f2)
+	local crypto_version=$(find /usr/${lib_dir}/erlang/ -type d -name crypto* | cut -d'-' -f2)
+	local asn1_verison=$(find /usr/${lib_dir}/erlang/ -type d -name asn1* | cut -d'-' -f2)
+
+	# prestripped files
+	# copied over from the live system as installed with dev/lang-erlang
+	QA_PRESTRIPPED="
+		/usr/${lib_dir}/riak/lib/asn1-${asn1_version}/priv/lib/asn1_erl_nif.so
+		/usr/${lib_dir}/riak/lib/crypto-${crypto_version}/priv/lib/crypto.so
+		/usr/${lib_dir}/riak/lib/os_mon-${osmon_version}/priv/bin/memsup
+		/usr/${lib_dir}/riak/lib/os_mon-${osmon_version}/priv/bin/cpu_sup
+		/usr/${lib_dir}/riak/lib/runtime_tools-${rt_version}/priv/lib/dyntrace.so
+		/usr/${lib_dir}/riak/lib/runtime_tools-${rt_version}/priv/lib/trace_ip_drv.so
+		/usr/${lib_dir}/riak/lib/runtime_tools-${rt_version}/priv/lib/trace_file_drv.so
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/beam
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/beam.smp
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/child_setup
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/inet_gethost
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/heart
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/erlexec
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/erlc
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/escript
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/ct_run
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/run_erl
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/to_erl
+		/usr/${lib_dir}/riak/erts-${erts_version}/bin/epmd
 "
+}
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -105,13 +109,18 @@ src_compile() {
 }
 
 src_install() {
+	set_prestripped
+
+	local lib_dir=$(get_libdir)
+	local erts_version=$(grep release /usr/lib/erlang/releases/RELEASES | sed -r 's/.*"(([0-9]+\.){0,}[0-9]+)".*/\1/')
+
 	# install /usr/lib
 	# TODO test on x86
-	insinto /usr/${LIB_DIR}/riak
+	insinto /usr/${lib_dir}/riak
 	doins -r rel/riak/lib
 	doins -r rel/riak/releases
-	doins -r rel/riak/erts-${ERTS_VERSION}
-	fperms -R 0755 /usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin
+	doins -r rel/riak/erts-${erts_version}
+	fperms -R 0755 /usr/${lib_dir}/riak/erts-${erts_version}/bin
 
 	# install /usr/bin
 	dobin rel/riak/bin/*
