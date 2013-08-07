@@ -26,30 +26,36 @@ SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/$
 	${LEVELDB_URI} -> ${LEVELDB_P}
 "
 
+LIB_DIR=$(get_libdir)
+# get version information for path of prestripped files
+ERTS_VERSION=$(grep release /usr/lib/erlang/releases/RELEASES | sed -r 's/.*"(([0-9]+\.){0,}[0-9]+)".*/\1/')
+RT_VERSION=$(find /usr/${LIB_DIR}/erlang/ -type d -name runtime_tools* | cut -d'-' -f2)
+OSMON_VERSION=$(find /usr/${LIB_DIR}/erlang/ -type d -name os_mon* | cut -d'-' -f2)
+CRYPTO_VERSION=$(find /usr/${LIB_DIR}/erlang/ -type d -name crypto* | cut -d'-' -f2)
+ASN1_VERSION=$(find /usr/${LIB_DIR}/erlang/ -type d -name asn1* | cut -d'-' -f2)
+
 # prestripped files
 # copied over from the live system as installed with dev/lang-erlang
-# TODO get versions dynamicaly
-LIB_DIR=$(get_libdir)
 QA_PRESTRIPPED="
-	/usr/${LIB_DIR}/riak/lib/asn1-*/priv/lib/asn1_erl_nif.so
-	/usr/${LIB_DIR}/riak/lib/crypto-*/priv/lib/crypto.so
-	/usr/${LIB_DIR}/riak/lib/os_mon-*/priv/bin/memsup
-	/usr/${LIB_DIR}/riak/lib/os_mon-*/priv/bin/cpu_sup
-	/usr/${LIB_DIR}/riak/lib/runtime_tools-*/priv/lib/dyntrace.so
-	/usr/${LIB_DIR}/riak/lib/runtime_tools-*/priv/lib/trace_ip_drv.so
-	/usr/${LIB_DIR}/riak/lib/runtime_tools-*/priv/lib/trace_file_drv.so
-	/usr/${LIB_DIR}/riak/erts-*/bin/beam
-	/usr/${LIB_DIR}/riak/erts-*/bin/beam.smp
-	/usr/${LIB_DIR}/riak/erts-*/bin/child_setup
-	/usr/${LIB_DIR}/riak/erts-*/bin/inet_gethost
-	/usr/${LIB_DIR}/riak/erts-*/bin/heart
-	/usr/${LIB_DIR}/riak/erts-*/bin/erlexec
-	/usr/${LIB_DIR}/riak/erts-*/bin/erlc
-	/usr/${LIB_DIR}/riak/erts-*/bin/escript
-	/usr/${LIB_DIR}/riak/erts-*/bin/ct_run
-	/usr/${LIB_DIR}/riak/erts-*/bin/run_erl
-	/usr/${LIB_DIR}/riak/erts-*/bin/to_erl
-	/usr/${LIB_DIR}/riak/erts-*/bin/epmd
+	/usr/${LIB_DIR}/riak/lib/asn1-${ASN1_VERSION}/priv/lib/asn1_erl_nif.so
+	/usr/${LIB_DIR}/riak/lib/crypto-${CRYPTO_VERSION}/priv/lib/crypto.so
+	/usr/${LIB_DIR}/riak/lib/os_mon-${OSMON_VERSION}/priv/bin/memsup
+	/usr/${LIB_DIR}/riak/lib/os_mon-${OSMON_VERSION}/priv/bin/cpu_sup
+	/usr/${LIB_DIR}/riak/lib/runtime_tools-${RT_VERSION}/priv/lib/dyntrace.so
+	/usr/${LIB_DIR}/riak/lib/runtime_tools-${RT_VERSION}/priv/lib/trace_ip_drv.so
+	/usr/${LIB_DIR}/riak/lib/runtime_tools-${RT_VERSION}/priv/lib/trace_file_drv.so
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/beam
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/beam.smp
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/child_setup
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/inet_gethost
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/heart
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/erlexec
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/erlc
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/escript
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/ct_run
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/run_erl
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/to_erl
+	/usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin/epmd
 "
 
 LICENSE="Apache-2.0"
@@ -104,8 +110,8 @@ src_install() {
 	insinto /usr/${LIB_DIR}/riak
 	doins -r rel/riak/lib
 	doins -r rel/riak/releases
-	doins -r rel/riak/erts-*
-	fperms -R 0755 /usr/${LIB_DIR}/riak/erts-*/bin
+	doins -r rel/riak/erts-${ERTS_VERSION}
+	fperms -R 0755 /usr/${LIB_DIR}/riak/erts-${ERTS_VERSION}/bin
 
 	# install /usr/bin
 	dobin rel/riak/bin/*
