@@ -26,15 +26,18 @@ SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/$
 	${LEVELDB_URI} -> ${LEVELDB_P}
 "
 
-# set list of prestripped files
-set_prestripped() {
+get_lib_version() {
+	echo -n $(find /usr/$(get_libdir)/erlang/lib/ -type d -name ${1}-* | cut -d'-' -f2)
+}
+
+get_prestripped() {
 	local lib_dir=$(get_libdir)
 	# get version information for path of prestripped files
-	local erts_version=$(grep release /usr/lib/erlang/releases/RELEASES | sed -r 's/.*"(([0-9]+\.){0,}[0-9]+)".*/\1/')
-	local rt_version=$(find /usr/${lib_dir}/erlang/ -type d -name runtime_tools* | cut -d'-' -f2)
-	local osmon_version=$(find /usr/${lib_dir}/erlang/ -type d -name os_mon* | cut -d'-' -f2)
-	local crypto_version=$(find /usr/${lib_dir}/erlang/ -type d -name crypto* | cut -d'-' -f2)
-	local asn1_verison=$(find /usr/${lib_dir}/erlang/ -type d -name asn1* | cut -d'-' -f2)
+	local erts_version=$(get_lib_version "erts")
+	local rt_version=$(get_lib_version "runtime_tools")
+	local osmon_version=$(get_lib_version "os_mon")
+	local crypto_version=$(get_lib_version "crypto")
+	local asn1_verison=$(get_lib_version "asn1")
 
 	# prestripped files
 	# copied over from the live system as installed with dev/lang-erlang
@@ -61,7 +64,7 @@ set_prestripped() {
 	"
 }
 
-QA_PRESTRIPPED=$(set_prestripped)
+QA_PRESTRIPPED=$(get_prestripped)
 
 LICENSE="Apache-2.0"
 SLOT="0"
