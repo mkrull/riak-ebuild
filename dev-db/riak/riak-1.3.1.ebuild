@@ -27,7 +27,7 @@ SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/$
 "
 
 get_lib_version() {
-	echo -n $(find /usr/$(get_libdir)/erlang/lib/ -type d -name ${1}-* | cut -d'-' -f2)
+	echo -n $(find /usr/$(get_libdir)/erlang/lib/ -maxdepth 1 -type d -name ${1}-* | cut -d'-' -f2)
 }
 
 get_prestripped() {
@@ -37,7 +37,7 @@ get_prestripped() {
 	local rt_version=$(get_lib_version "runtime_tools")
 	local osmon_version=$(get_lib_version "os_mon")
 	local crypto_version=$(get_lib_version "crypto")
-	local asn1_verison=$(get_lib_version "asn1")
+	local asn1_version=$(get_lib_version "asn1")
 
 	# prestripped files
 	# copied over from the live system as installed with dev/lang-erlang
