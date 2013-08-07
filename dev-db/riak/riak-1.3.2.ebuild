@@ -21,27 +21,28 @@ SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/$(get_version_compone
 	${LEVELDB_URI} -> ${LEVELDB_P}
 "
 
-LIB_DIR=$(get_libdir)
+# prestripped files
+# bootstrapped from existing dev-lang/erlang install
 QA_PRESTRIPPED="
-	/usr/${LIB_DIR}/riak/lib/asn1-.*/priv/lib/asn1_erl_nif.so
-	/usr/${LIB_DIR}/riak/lib/crypto-.*/priv/lib/crypto.so
-	/usr/${LIB_DIR}/riak/lib/os_mon-.*/priv/bin/memsup
-	/usr/${LIB_DIR}/riak/lib/os_mon-.*/priv/bin/cpu_sup
-	/usr/${LIB_DIR}/riak/lib/runtime_tools-.*/priv/lib/dyntrace.so
-	/usr/${LIB_DIR}/riak/lib/runtime_tools-.*/priv/lib/trace_ip_drv.so
-	/usr/${LIB_DIR}/riak/lib/runtime_tools-.*/priv/lib/trace_file_drv.so
-	/usr/${LIB_DIR}/riak/erts-.*/bin/beam
-	/usr/${LIB_DIR}/riak/erts-.*/bin/beam.smp
-	/usr/${LIB_DIR}/riak/erts-.*/bin/child_setup
-	/usr/${LIB_DIR}/riak/erts-.*/bin/inet_gethost
-	/usr/${LIB_DIR}/riak/erts-.*/bin/heart
-	/usr/${LIB_DIR}/riak/erts-.*/bin/erlexec
-	/usr/${LIB_DIR}/riak/erts-.*/bin/erlc
-	/usr/${LIB_DIR}/riak/erts-.*/bin/escript
-	/usr/${LIB_DIR}/riak/erts-.*/bin/ct_run
-	/usr/${LIB_DIR}/riak/erts-.*/bin/run_erl
-	/usr/${LIB_DIR}/riak/erts-.*/bin/to_erl
-	/usr/${LIB_DIR}/riak/erts-.*/bin/epmd
+	/usr/lib.*/riak/lib/asn1-.*/priv/lib/asn1_erl_nif.so
+	/usr/lib.*/riak/lib/crypto-.*/priv/lib/crypto.so
+	/usr/lib.*/riak/lib/os_mon-.*/priv/bin/memsup
+	/usr/lib.*/riak/lib/os_mon-.*/priv/bin/cpu_sup
+	/usr/lib.*/riak/lib/runtime_tools-.*/priv/lib/dyntrace.so
+	/usr/lib.*/riak/lib/runtime_tools-.*/priv/lib/trace_ip_drv.so
+	/usr/lib.*/riak/lib/runtime_tools-.*/priv/lib/trace_file_drv.so
+	/usr/lib.*/riak/erts-.*/bin/beam
+	/usr/lib.*/riak/erts-.*/bin/beam.smp
+	/usr/lib.*/riak/erts-.*/bin/child_setup
+	/usr/lib.*/riak/erts-.*/bin/inet_gethost
+	/usr/lib.*/riak/erts-.*/bin/heart
+	/usr/lib.*/riak/erts-.*/bin/erlexec
+	/usr/lib.*/riak/erts-.*/bin/erlc
+	/usr/lib.*/riak/erts-.*/bin/escript
+	/usr/lib.*/riak/erts-.*/bin/ct_run
+	/usr/lib.*/riak/erts-.*/bin/run_erl
+	/usr/lib.*/riak/erts-.*/bin/to_erl
+	/usr/lib.*/riak/erts-.*/bin/epmd
 "
 
 LICENSE="Apache-2.0"
@@ -89,15 +90,16 @@ src_compile() {
 }
 
 src_install() {
-	local erts_version=$(find /usr/$(get_libdir)/erlang/lib/ -maxdepth 1 -type d -name erts-* | cut -d'-' -f2)
+	local lib_dir=$(get_libdir)
+	local erts_version=$(find /usr/${lib_dir}/erlang/lib/ -maxdepth 1 -type d -name erts-* | cut -d'-' -f2)
 
 	# install /usr/lib
 	# TODO test on x86
-	insinto /usr/${LIB_DIR}/riak
+	insinto /usr/${lib_dir}/riak
 	doins -r rel/riak/lib
 	doins -r rel/riak/releases
 	doins -r rel/riak/erts-${erts_version}
-	fperms -R 0755 /usr/${LIB_DIR}/riak/erts-${erts_version}/bin
+	fperms -R 0755 /usr/${lib_dir}/riak/erts-${erts_version}/bin
 
 	# install /usr/bin
 	dobin rel/riak/bin/*
