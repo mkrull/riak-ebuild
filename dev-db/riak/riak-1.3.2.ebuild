@@ -59,7 +59,27 @@ get_prestripped() {
 	"
 }
 
-QA_PRESTRIPPED=$(get_prestripped)
+QA_PRESTRIPPED= "
+	/usr/${lib_dir}/riak/lib/asn1-.*/priv/lib/asn1_erl_nif.so
+	/usr/${lib_dir}/riak/lib/crypto-.*/priv/lib/crypto.so
+	/usr/${lib_dir}/riak/lib/os_mon-.*/priv/bin/memsup
+	/usr/${lib_dir}/riak/lib/os_mon-.*/priv/bin/cpu_sup
+	/usr/${lib_dir}/riak/lib/runtime_tools-.*/priv/lib/dyntrace.so
+	/usr/${lib_dir}/riak/lib/runtime_tools-.*/priv/lib/trace_ip_drv.so
+	/usr/${lib_dir}/riak/lib/runtime_tools-.*/priv/lib/trace_file_drv.so
+	/usr/${lib_dir}/riak/erts-.*/bin/beam
+	/usr/${lib_dir}/riak/erts-.*/bin/beam.smp
+	/usr/${lib_dir}/riak/erts-.*/bin/child_setup
+	/usr/${lib_dir}/riak/erts-.*/bin/inet_gethost
+	/usr/${lib_dir}/riak/erts-.*/bin/heart
+	/usr/${lib_dir}/riak/erts-.*/bin/erlexec
+	/usr/${lib_dir}/riak/erts-.*/bin/erlc
+	/usr/${lib_dir}/riak/erts-.*/bin/escript
+	/usr/${lib_dir}/riak/erts-.*/bin/ct_run
+	/usr/${lib_dir}/riak/erts-.*/bin/run_erl
+	/usr/${lib_dir}/riak/erts-.*/bin/to_erl
+	/usr/${lib_dir}/riak/erts-.*/bin/epmd
+	"
 
 LICENSE="Apache-2.0"
 SLOT="0"
