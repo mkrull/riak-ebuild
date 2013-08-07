@@ -6,11 +6,6 @@ EAPI=5
 
 inherit versionator eutils user multilib toolchain-funcs
 
-# needed to download the archive
-MAJ_PV="$(get_major_version)"
-MED_PV="$(get_version_component_range 2)"
-MIN_PV="$(get_version_component_range 3)"
-
 # build time dependency
 # fork of the google project with riak specific changes
 # is used to build the eleveldb lib and gets removed before install
@@ -22,7 +17,7 @@ LEVELDB_TARGET_LOCATION="${S}/deps/eleveldb/c_src/leveldb"
 
 DESCRIPTION="An open source, distributed database"
 HOMEPAGE="http://www.basho.com/"
-SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/${PV}/${P}.tar.gz
+SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/$(get_version_component_range 1-2)/${PV}/${P}.tar.gz
 	${LEVELDB_URI} -> ${LEVELDB_P}
 "
 
@@ -40,7 +35,7 @@ get_prestripped() {
 	local asn1_version=$(get_lib_version "asn1")
 
 	# prestripped files
-	# copied over from the live system as installed with dev/lang-erlang
+	# copied over from the live system as installed with dev-lang/erlang
 	echo -n "
 		/usr/${lib_dir}/riak/lib/asn1-${asn1_version}/priv/lib/asn1_erl_nif.so
 		/usr/${lib_dir}/riak/lib/crypto-${crypto_version}/priv/lib/crypto.so
@@ -73,12 +68,10 @@ KEYWORDS="~amd64 ~x86"
 IUSE="doc"
 
 # TODO test non smp install
-RDEPEND="
+DEPEND="
 	<dev-lang/erlang-16
 	>=dev-lang/erlang-15.2.3.1[smp]
 "
-
-DEPEND="${RDEPEND}"
 
 pkg_setup() {
 	ebegin "Creating riak user and group"
@@ -114,7 +107,7 @@ src_compile() {
 
 src_install() {
 	local lib_dir=$(get_libdir)
-	local erts_version=$(grep release /usr/lib/erlang/releases/RELEASES | sed -r 's/.*"(([0-9]+\.){0,}[0-9]+)".*/\1/')
+	local erts_version=$(get_lib_version "erts")
 
 	# install /usr/lib
 	# TODO test on x86
