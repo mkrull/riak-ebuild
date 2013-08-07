@@ -59,6 +59,7 @@ get_prestripped() {
 	"
 }
 
+lib_dir=$(get_libdir)
 QA_PRESTRIPPED= "
 	/usr/${lib_dir}/riak/lib/asn1-.*/priv/lib/asn1_erl_nif.so
 	/usr/${lib_dir}/riak/lib/crypto-.*/priv/lib/crypto.so
