@@ -98,7 +98,12 @@ src_install() {
 	doins -r rel/riak/lib \
 		rel/riak/releases \
 		rel/riak/erts-${erts_version}
-	fperms -R 0755 /usr/${lib_dir}/riak/erts-${erts_version}/bin
+	fperms -R 0755 /usr/${lib_dir}/riak/erts-${erts_version}/bin \
+		/usr/${lib_dir}/riak/lib/observer-*/priv/bin \
+		/usr/${lib_dir}/riak/lib/eper-*/priv/bin \
+		/usr/${lib_dir}/riak/lib/inets-*/priv/bin \
+		/usr/${lib_dir}/riak/lib/webtool-*/priv/bin \
+		/usr/${lib_dir}/riak/lib/os_mon-*/priv/bin
 
 	# install /usr/bin
 	dobin rel/riak/bin/*
