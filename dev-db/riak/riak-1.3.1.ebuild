@@ -26,8 +26,7 @@ SRC_URI="http://s3.amazonaws.com/downloads.basho.com/${PN}/${MAJ_PV}.${MED_PV}/$
 	${LEVELDB_URI} -> ${LEVELDB_P}
 "
 
-QA_PRESTRIPPED=""
-
+# set list of prestripped files
 set_prestripped() {
 	local lib_dir=$(get_libdir)
 	# get version information for path of prestripped files
@@ -39,7 +38,7 @@ set_prestripped() {
 
 	# prestripped files
 	# copied over from the live system as installed with dev/lang-erlang
-	QA_PRESTRIPPED="
+	echo -n "
 		/usr/${lib_dir}/riak/lib/asn1-${asn1_version}/priv/lib/asn1_erl_nif.so
 		/usr/${lib_dir}/riak/lib/crypto-${crypto_version}/priv/lib/crypto.so
 		/usr/${lib_dir}/riak/lib/os_mon-${osmon_version}/priv/bin/memsup
@@ -59,8 +58,10 @@ set_prestripped() {
 		/usr/${lib_dir}/riak/erts-${erts_version}/bin/run_erl
 		/usr/${lib_dir}/riak/erts-${erts_version}/bin/to_erl
 		/usr/${lib_dir}/riak/erts-${erts_version}/bin/epmd
-"
+	"
 }
+
+QA_PRESTRIPPED=$(set_prestripped)
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -109,8 +110,6 @@ src_compile() {
 }
 
 src_install() {
-	set_prestripped
-
 	local lib_dir=$(get_libdir)
 	local erts_version=$(grep release /usr/lib/erlang/releases/RELEASES | sed -r 's/.*"(([0-9]+\.){0,}[0-9]+)".*/\1/')
 
