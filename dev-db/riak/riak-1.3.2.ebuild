@@ -66,8 +66,8 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PV}-fix-directories.patch"
-	epatch "${FILESDIR}/${PV}-honor-cflags.patch"
+	epatch "${FILESDIR}/${PV}-fix-directories.patch" \
+		"${FILESDIR}/${PV}-honor-cflags.patch"
 	sed -i \
 		-e '/XLDFLAGS="$(LDFLAGS)"/d' deps/erlang_js/c_src/Makefile || die
 
@@ -96,9 +96,9 @@ src_install() {
 	# install /usr/lib
 	# TODO test on x86
 	insinto /usr/${lib_dir}/riak
-	doins -r rel/riak/lib
-	doins -r rel/riak/releases
-	doins -r rel/riak/erts-${erts_version}
+	doins -r rel/riak/lib \
+		rel/riak/releases \
+		rel/riak/erts-${erts_version}
 	fperms -R 0755 /usr/${lib_dir}/riak/erts-${erts_version}/bin
 
 	# install /usr/bin
@@ -109,16 +109,16 @@ src_install() {
 	doins rel/riak/etc/*
 
 	# restrict access to cert and key
-	fperms 0600 /etc/riak/cert.pem
-	fperms 0600 /etc/riak/key.pem
+	fperms 0600 /etc/riak/cert.pem \
+		/etc/riak/key.pem
 
 	# create neccessary directories
-	keepdir /var/lib/riak/{bitcask,ring}
-	keepdir /var/log/riak/sasl
+	keepdir /var/lib/riak/{bitcask,ring} \
+		/var/log/riak/sasl
 
 	# change owner to riak
-	fowners -R riak:riak /var/lib/riak
-	fowners -R riak:riak /var/log/riak
+	fowners -R riak:riak /var/lib/riak \
+		/var/log/riak
 
 	# create docs
 	doman doc/man/man1/*
