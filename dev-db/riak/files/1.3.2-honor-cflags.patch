@@ -21,8 +21,8 @@
  
 -OPT ?= -O2 -g -DNDEBUG    # (A) Production use (optimized mode)
 -# OPT ?= -g2              # (B) Debug mode, w/ full line-level debugging symbols
-+#OPT ?= -O2 -g -DNDEBUG    # (A) Production use (optimized mode)
-+OPT ?= -g2              # (B) Debug mode, w/ full line-level debugging symbols
++# OPT ?= -O2 -g -DNDEBUG  # (A) Production use (optimized mode)
++OPT ?=                    # (B) Debug mode, w/ full line-level debugging symbols
  # OPT ?= -O2 -g2 -DNDEBUG # (C) Profiling mode: opt, but w/debugging symbols
  #-----------------------------------------------
  
@@ -33,14 +33,14 @@
  elif test $ac_cv_prog_cc_g = yes; then
    if test "$GCC" = yes; then
 -    CFLAGS="-g -O2"
-+    CFLAGS="-g"
++    CFLAGS=
    else
      CFLAGS="-g"
    fi
  else
    if test "$GCC" = yes; then
 -    CFLAGS="-O2"
-+    CFLAGS=""
++    CFLAGS=
    else
      CFLAGS=
    fi
@@ -49,14 +49,14 @@
  elif test $ac_cv_prog_cxx_g = yes; then
    if test "$GXX" = yes; then
 -    CXXFLAGS="-g -O2"
-+    CXXFLAGS="-g"
++    CXXFLAGS=
    else
      CXXFLAGS="-g"
    fi
  else
    if test "$GXX" = yes; then
 -    CXXFLAGS="-O2"
-+    CXXFLAGS=""
++    CXXFLAGS=
    else
      CXXFLAGS=
    fi
@@ -65,14 +65,14 @@
  elif test $ac_cv_prog_cxx_g = yes; then
    if test "$GXX" = yes; then
 -    CXXFLAGS="-g -O2"
-+    CXXFLAGS="-g"
++    CXXFLAGS=
    else
      CXXFLAGS="-g"
    fi
  else
    if test "$GXX" = yes; then
 -    CXXFLAGS="-O2"
-+    CXXFLAGS=""
++    CXXFLAGS=
    else
      CXXFLAGS=
    fi
@@ -123,7 +123,7 @@
  	done
  	(cd $(NSPR_DIR) && \
 -	 ./configure --disable-debug --enable-optimize \
-+	 ./configure \
++	 ./configure --disable-debug \
                       --prefix=$(SYSTEM_DIR) $(NSPR_SIXTYFOUR) && \
           $(MAKE) all install)
 
