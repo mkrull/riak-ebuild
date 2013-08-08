@@ -65,10 +65,11 @@ pkg_setup() {
 }
 
 src_prepare() {
+	# unpack source archive to patch cflags with honor-cflags-patch
+	tar xfp "${S}"/deps/erlang_js/c_src/js-*.tar.gz -C "${S}"/deps/erlang_js/c_src/ || die
+
 	epatch "${FILESDIR}/${PV}-fix-directories.patch" \
 		"${FILESDIR}/${PV}-honor-cflags.patch"
-	sed -i \
-		-e '/XLDFLAGS="$(LDFLAGS)"/d' deps/erlang_js/c_src/Makefile || die
 
 	# avoid fetching deps via git that are already available
 	ln -s ${LEVELDB_WD} ${LEVELDB_TARGET_LOCATION} || die
@@ -85,6 +86,7 @@ src_compile() {
 		CXX=$(tc-getCXX) \
 		AR=$(tc-getAR) \
 		LD=$(tc-getLD) \
+		RANLIB=$(tc-getRANLIB) \
 		STRIP="" rel
 }
 
