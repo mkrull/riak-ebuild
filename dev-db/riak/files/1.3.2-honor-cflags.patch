@@ -13,6 +13,57 @@
               {"DRV_LDFLAGS", "$DRV_LDFLAGS c_src/leveldb/libleveldb.a c_src/system/lib/libsnappy.a -lstdc++"}
               ]}.
 
+--- a/deps/eleveldb/c_src/snappy-1.0.4/configure	2011-09-15 21:29:20.000000000 +0200
++++ b/deps/eleveldb/c_src/snappy-1.0.4/configure	2013-08-08 12:10:58.335772573 +0200
+@@ -3930,13 +3930,13 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-g"
+   else
+     CFLAGS="-g"
+   fi
+ else
+   if test "$GCC" = yes; then
+-    CFLAGS="-O2"
++    CFLAGS=""
+   else
+     CFLAGS=
+   fi
+@@ -10934,13 +10934,13 @@
+   CXXFLAGS=$ac_save_CXXFLAGS
+ elif test $ac_cv_prog_cxx_g = yes; then
+   if test "$GXX" = yes; then
+-    CXXFLAGS="-g -O2"
++    CXXFLAGS="-g"
+   else
+     CXXFLAGS="-g"
+   fi
+ else
+   if test "$GXX" = yes; then
+-    CXXFLAGS="-O2"
++    CXXFLAGS=""
+   else
+     CXXFLAGS=
+   fi
+@@ -11319,13 +11319,13 @@
+   CXXFLAGS=$ac_save_CXXFLAGS
+ elif test $ac_cv_prog_cxx_g = yes; then
+   if test "$GXX" = yes; then
+-    CXXFLAGS="-g -O2"
++    CXXFLAGS="-g"
+   else
+     CXXFLAGS="-g"
+   fi
+ else
+   if test "$GXX" = yes; then
+-    CXXFLAGS="-O2"
++    CXXFLAGS=""
+   else
+     CXXFLAGS=
+   fi
+
 --- a/deps/erlang_js/c_src/Makefile	2013-01-29 21:13:01.000000000 +0100                
 +++ b/deps/erlang_js/c_src/Makefile	2013-08-08 11:38:12.687204467 +0200
 @@ -25,20 +25,18 @@

@@ -65,8 +65,9 @@ pkg_setup() {
 }
 
 src_prepare() {
-	# unpack source archive to patch cflags with honor-cflags-patch
+	# unpack source archive to patch with honor-cflags-patch
 	tar xfp "${S}"/deps/erlang_js/c_src/js-*.tar.gz -C "${S}"/deps/erlang_js/c_src/ || die
+	tar xfp "${S}"/deps/eleveldb/c_src/snappy-*.tar.gz -C "${S}"/deps/eleveldb/c_src/ || die
 
 	epatch "${FILESDIR}/${PV}-fix-directories.patch" \
 		"${FILESDIR}/${PV}-honor-cflags.patch"
