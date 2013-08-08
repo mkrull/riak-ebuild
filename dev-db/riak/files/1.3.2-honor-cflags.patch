@@ -13,6 +13,19 @@
               {"DRV_LDFLAGS", "$DRV_LDFLAGS c_src/leveldb/libleveldb.a c_src/system/lib/libsnappy.a -lstdc++"}
               ]}.
 
+--- a/deps/eleveldb/c_src/leveldb/Makefile"	2013-06-20 19:05:29.000000000 +0200
++++ b/deps/eleveldb/c_src/leveldb/Makefile	2013-08-08 13:15:20.821804976 +0200
+@@ -9,8 +9,8 @@
+ # Uncomment exactly one of the lines labelled (A), (B), and (C) below
+ # to switch between compilation modes.
+ 
+-OPT ?= -O2 -g -DNDEBUG    # (A) Production use (optimized mode)
+-# OPT ?= -g2              # (B) Debug mode, w/ full line-level debugging symbols
++#OPT ?= -O2 -g -DNDEBUG    # (A) Production use (optimized mode)
++OPT ?= -g2              # (B) Debug mode, w/ full line-level debugging symbols
+ # OPT ?= -O2 -g2 -DNDEBUG # (C) Profiling mode: opt, but w/debugging symbols
+ #-----------------------------------------------
+ 
 --- a/deps/eleveldb/c_src/snappy-1.0.4/configure	2011-09-15 21:29:20.000000000 +0200
 +++ b/deps/eleveldb/c_src/snappy-1.0.4/configure	2013-08-08 12:10:58.335772573 +0200
 @@ -3930,13 +3930,13 @@
@@ -63,17 +76,6 @@
    else
      CXXFLAGS=
    fi
-
---- a/deps/eleveldb/c_src/snappy-1.0.4/aclocal.m4	2011-09-15 21:29:18.000000000 +0200
-+++ b/deps/eleveldb/c_src/snappy-1.0.4/aclocal.m4	2013-08-08 13:01:31.747798021 +0200
-@@ -6995,7 +6995,7 @@
- [m4_ifdef([AC_PROG_GCJ], [AC_PROG_GCJ],
-   [m4_ifdef([A][M_PROG_GCJ], [A][M_PROG_GCJ],
-     [AC_CHECK_TOOL(GCJ, gcj,)
--      test "x${GCJFLAGS+set}" = xset || GCJFLAGS="-g -O2"
-+      test "x${GCJFLAGS+set}" = xset || GCJFLAGS="-g"
-       AC_SUBST(GCJFLAGS)])])[]dnl
- ])
 
 --- a/deps/eleveldb/c_src/build_deps.sh	2013-01-30 01:06:04.000000000 +0100
 +++ b/deps/eleveldb/c_src/build_deps.sh	2013-08-08 12:26:50.878780564 +0200
