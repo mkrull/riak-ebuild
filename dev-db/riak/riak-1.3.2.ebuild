@@ -69,15 +69,15 @@ src_prepare() {
 	tar xfp "${S}"/deps/erlang_js/c_src/js-*.tar.gz -C "${S}"/deps/erlang_js/c_src/ || die
 	tar xfp "${S}"/deps/eleveldb/c_src/snappy-*.tar.gz -C "${S}"/deps/eleveldb/c_src/ || die
 
-	epatch "${FILESDIR}/${PV}-fix-directories.patch" \
-		"${FILESDIR}/${PV}-honor-cflags.patch"
-
 	# avoid fetching deps via git that are already available
 	ln -s ${LEVELDB_WD} ${LEVELDB_TARGET_LOCATION} || die
 	mkdir -p "${S}"/deps/riaknostic/deps || die
 	ln -s "${S}"/deps/lager "${S}"/deps/riaknostic/deps || die
 	ln -s "${S}"/deps/meck "${S}"/deps/riaknostic/deps || die
 	ln -s "${S}"/deps/getopt "${S}"/deps/riaknostic/deps || die
+
+	epatch "${FILESDIR}/${PV}-fix-directories.patch" \
+		"${FILESDIR}/${PV}-honor-cflags.patch"
 }
 
 src_compile() {
